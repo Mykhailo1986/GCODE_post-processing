@@ -1,14 +1,19 @@
-import sys
 
+def check_LA_in_gcode(gcode_file:str)->bool:
+    '''return True if Line Advance is already in file'''
+    with open(gcode_file, "r") as file:
+        lines:list = file.readlines()  # Read all lines of the file
+        for line in lines:
+            if ";LINEARADVANCEPROCESSED" in line:
+                return True
+        return False
+def add_LA(gcode_file:str,line_width: float, layer_height : float  , linear_advance_factor: float, material_diameter: float ):
+    '''Insert Linaer Avance lines in gcodefile'''
 
-def add_LA(line_width: float, layer_height : float  , linear_advance_factor: float, material_diameter: float ):
-
-
-    # Get the file path from the command line argument
-    file_path = sys.argv[1]
-
+    if check_LA_in_gcode(gcode_file):
+        return
     # Open the file in read mode
-    with open(file_path, "r") as file:
+    with open(gcode_file, "r") as file:
         lines = file.readlines()  # Read all lines of the file
         lines.insert(10, ";LINEARADVANCEPROCESSED\n")
         lines.append(r';SETTING_3 {"global_quality": "[values]\\nline_width = 0.3\\nmaterial_linear_adv'+'\n')
@@ -27,6 +32,6 @@ def add_LA(line_width: float, layer_height : float  , linear_advance_factor: flo
             lines.insert(i , "M900 K{:.5f}0 T0 ;added by LinearAdvanceSettingPlugin\n".format(linear_advance_factor))
             break  # Stop the loop after the occurrence
     # Write the modified lines back to the file
-    with open(file_path, "w") as file:
+    with open(gcode_file, "w") as file:
         file.writelines(lines)
 

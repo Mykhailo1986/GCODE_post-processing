@@ -1,14 +1,8 @@
-import sys
-
-
-def fan_on_off(FAN_FROM: int, FAN_POWER : int  , FAN_TILL: int):
-
-
-    # Get the file path from the command line argument
-    file_path = sys.argv[1]
+def fan_on_off(gcode_file:str, FAN_FROM: int, FAN_POWER : int  , FAN_TILL: int):
+    '''Changes the gcode, adds the starts and stops of fan'''
 
     # Open the file in read mode
-    with open(file_path, "r") as file:
+    with open(gcode_file, "r") as file:
         lines = file.readlines()  # Read all lines of the file
     # Count the occurrences of ";AFTER_LAYER_CHANGE"
     count: int = 0
@@ -25,7 +19,7 @@ def fan_on_off(FAN_FROM: int, FAN_POWER : int  , FAN_TILL: int):
                 lines.insert(i + 1, "M106 S0   ; Turn off the fan \n")
                 break  # Stop the loop after the occurrence
     # Write the modified lines back to the file
-    with open(file_path, "w") as file:
+    with open(gcode_file, "w") as file:
         file.writelines(lines)
 
 

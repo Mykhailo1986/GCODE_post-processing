@@ -1,18 +1,7 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-# Specify the file path
-import sys
-
-
-def layer_look(layer:int, X:int, Y:int):
-    # Get the file path from the command line argument
-    file_path: str = sys.argv[1]
+def layer_look(gcode_file:str, layer:int, X:int, Y:int):
+    '''Adds stops in printing to give possibility to loock at the specific layer'''
     # Open the file in read mode
-    with open(file_path, "r") as file:
+    with open(gcode_file, "r") as file:
         lines: list[str] = file.readlines()  # Read all lines of the file
     # Count the occurrences of ";AFTER_LAYER_CHANGE"
     count: int = -1
@@ -31,9 +20,7 @@ def layer_look(layer:int, X:int, Y:int):
                                     ";Move Back\n" % (last_x, last_y))
                 break  # Stop the loop after the third occurrence
     # Write the modified lines back to the file
-    with open(file_path, "w") as file:
+    with open(gcode_file, "w") as file:
         file.writelines(lines)
 
 
-# layer_look()
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/

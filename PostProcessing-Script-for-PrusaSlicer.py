@@ -1,20 +1,20 @@
 import sys
 import json
+
+import linear_advance_add
 from fan_layers_control import fan_on_off
-from extrusion_width_hight import width_hight
+import extrusion_width_hight
 from linear_advance_add import add_LA
 from first_layers_look import layer_look
 from arc_helper import arc_weider, arc_straightener
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
-    QProgressBar,
-    QMainWindow,
     QApplication,
     QDialog,
     QRadioButton,
     QButtonGroup,
+    QMessageBox,
 )
 
 
@@ -23,13 +23,18 @@ class MainDialog(QDialog):
         super().__init__()
         self.resize(600, 520)
 
+        self.translate_button = QtWidgets.QPushButton(self)
+        self.translate_button.setText(self.load_parameter("translate_button"))
+        self.translate_button.setGeometry(QtCore.QRect(550, 0, 50, 50))
+        self.translate_button.setObjectName("translate_button")
+        self.translate_button.clicked.connect(self.change_language)
+
         # Firts block for Line Advance
 
         self.checkBox_LA = QtWidgets.QCheckBox(self)
         self.checkBox_LA.setGeometry(QtCore.QRect(30, 35, 111, 20))
         self.checkBox_LA.setObjectName("checkBox_LA")
         self.checkBox_LA.setChecked(False)
-        self.checkBox_LA.setChecked(self.load_parameter(self.checkBox_LA.objectName()))
         self.checkBox_LA.clicked.connect(self.checkBox_LA_toggled)
 
         self.label_checkBox_LA = QtWidgets.QLabel(self)
@@ -61,13 +66,11 @@ class MainDialog(QDialog):
         self.doubleSpinBox_line_width.setGeometry(QtCore.QRect(190, 35, 68, 20))
         self.doubleSpinBox_line_width.setSingleStep(0.1)
         self.doubleSpinBox_line_width.setObjectName("doubleSpinBox_line_width")
-        self.doubleSpinBox_line_width.setValue(width_hight()[0])
 
         self.doubleSpinBox_layer_height = QtWidgets.QDoubleSpinBox(self)
         self.doubleSpinBox_layer_height.setGeometry(QtCore.QRect(280, 35, 68, 20))
         self.doubleSpinBox_layer_height.setSingleStep(0.04)
         self.doubleSpinBox_layer_height.setObjectName("doubleSpinBox_layer_height")
-        self.doubleSpinBox_layer_height.setValue(width_hight()[1])
 
         self.doubleSpinBox_material_diameter = QtWidgets.QDoubleSpinBox(self)
         self.doubleSpinBox_material_diameter.setGeometry(QtCore.QRect(390, 35, 68, 20))
@@ -80,9 +83,6 @@ class MainDialog(QDialog):
         self.doubleSpinBox_material_linear_advance_factor = QtWidgets.QDoubleSpinBox(
             self
         )
-        self.doubleSpinBox_material_linear_advance_factor.setValue(
-            self.load_parameter("doubleSpinBox_material_linear_advance_factor")
-        )
         self.doubleSpinBox_material_linear_advance_factor.setGeometry(
             QtCore.QRect(375, 70, 68, 20)
         )
@@ -92,12 +92,6 @@ class MainDialog(QDialog):
         self.doubleSpinBox_material_linear_advance_factor.setObjectName(
             "doubleSpinBox_material_linear_advance_factor"
         )
-
-        self.translate_button = QtWidgets.QPushButton(self)
-        self.translate_button.setText(self.load_parameter("translate_button"))
-        self.translate_button.setGeometry(QtCore.QRect(550, 0, 50, 50))
-        self.translate_button.setObjectName("translate_button")
-        self.translate_button.clicked.connect(self.change_language)
 
         self.list_LA: list(QtWidgets) = [
             self.label_checkBox_LA,
@@ -111,7 +105,14 @@ class MainDialog(QDialog):
             self.doubleSpinBox_material_linear_advance_factor,
         ]
 
-        self.checkBox_LA_toggled(self.load_parameter("checkBox_LA"))
+        if self.load_parameter("checkBox_LA"):
+            for widget in self.list_LA:
+                widget.setEnabled(True)
+        else:
+            for widget in self.list_LA:
+                widget.setDisabled(True)
+
+        self.set_values_LA()
 
         self.line_1 = QtWidgets.QFrame(self)
         self.line_1.setGeometry(QtCore.QRect(20, 90, 471, 16))
@@ -238,6 +239,7 @@ class MainDialog(QDialog):
         self.checkBox_vent = QtWidgets.QCheckBox(self)
         self.checkBox_vent.setGeometry(QtCore.QRect(30, 370, 181, 20))
         self.checkBox_vent.setObjectName("checkBox_vent")
+        self.checkBox_vent.setChecked(self.load_parameter("checkBox_vent"))
         self.checkBox_vent.clicked.connect(self.checkBox_vent_toggled)
 
         self.label_checkBox_vent = QtWidgets.QLabel(self)
@@ -288,7 +290,8 @@ class MainDialog(QDialog):
             self.label_vent_stop,
             self.pushButton_add_vent,
         ]
-        self.checkBox_vent_toggled(False)
+
+        self.checkBox_vent_toggled(self.load_parameter("checkBox_vent"))
 
         self.pushButton_run = QtWidgets.QPushButton(self)
         self.pushButton_run.setGeometry(QtCore.QRect(500, 420, 80, 80))
@@ -298,30 +301,48 @@ class MainDialog(QDialog):
         self.pushButton_run.setStyleSheet("color: green")
         self.pushButton_run.clicked.connect(self.run)
 
+        self.label_copyright = QtWidgets.QLabel(self)
+        self.label_copyright.setText("©Mykhailo Kucher 2023\nEmail: I_am_Misha@i.ua ")
+        # Customize the font and style of the label
+        font = self.label_copyright.font()
+        font.setBold(True)
+        font.setPointSize(12)
+        self.label_copyright.setFont(font)
+        self.label_copyright.setGeometry(QtCore.QRect(30, 450, 300, 80))
+        self.label_copyright.setObjectName("label_copyright")
+
         self.retranslate()
         self.show()
 
     def run(self):
 
         self.save_config()
-        if self.checkBox_vent.isChecked():
+        if (
+            self.checkBox_vent.isChecked()
+            and self.spinBox_vent_start.value() == 0
+            and self.spinBox_vent_stop.value() == 0
+        ):
             fan_on_off(
+                gcode_file,
                 self.spinBox_vent_start.value(),
                 self.spinBox_vent_power.value(),
                 self.spinBox_vent_stop.value(),
             )
             try:
                 fan_on_off(
+                    gcode_file,
                     self.spinBox_vent_start_2.value(),
                     self.spinBox_vent_power_2.value(),
                     self.spinBox_vent_stop_2.value(),
                 )
                 fan_on_off(
+                    gcode_file,
                     self.spinBox_vent_start_3.value(),
                     self.spinBox_vent_power_3.value(),
                     self.spinBox_vent_stop_3.value(),
                 )
                 fan_on_off(
+                    gcode_file,
                     self.spinBox_vent_start_4.value(),
                     self.spinBox_vent_power_4.value(),
                     self.spinBox_vent_stop_4.value(),
@@ -329,7 +350,9 @@ class MainDialog(QDialog):
             except:
                 pass
         if self.checkBox_LA.isChecked():
+
             add_LA(
+                gcode_file,
                 self.doubleSpinBox_line_width.value(),
                 self.doubleSpinBox_layer_height.value(),
                 self.doubleSpinBox_material_linear_advance_factor.value(),
@@ -337,12 +360,14 @@ class MainDialog(QDialog):
             )
         if self.checkBox_look.isChecked():
             layer_look(
+                gcode_file,
                 self.spinBox_layer.value(),
                 self.spinBox_X.value(),
                 self.spinBox_Y.value(),
             )
             try:
                 layer_look(
+                    gcode_file,
                     self.spinBox_layer_2.value(),
                     self.spinBox_X_2.value(),
                     self.spinBox_Y_2.value(),
@@ -353,6 +378,7 @@ class MainDialog(QDialog):
                     self.spinBox_Y_3.value(),
                 )
                 layer_look(
+                    gcode_file,
                     self.spinBox_layer_4.value(),
                     self.spinBox_X_4.value(),
                     self.spinBox_Y_4.value(),
@@ -361,15 +387,31 @@ class MainDialog(QDialog):
                 pass
         if self.checkBox_Arc.isChecked():
             if self.radioButton_ArcWeider.isChecked():
-                arc_weider()
+                arc_weider(gcode_file)
             if self.radioButton_ArcStraightener.isChecked():
-                arc_straightener()
+                arc_straightener(gcode_file)
 
         sys.exit()
 
     def checkBox_LA_toggled(self, is_checked):
         """Check if the LA CheckBox is toggled, and change ability for use the LA widgets"""
+
         if is_checked:
+            if linear_advance_add.check_LA_in_gcode(gcode_file):
+                LA_exist = QMessageBox()
+                LA_exist.setText(
+                    "Your G-code already contains a linear advance option,\n"
+                    " there may be no need to modify or add additional instructions \n"
+                    "for linear advance in your post-processing script. "
+                    if self.translate_button.text() == "EN"
+                    else "Ваш G-code Вже має linear advance функцію,\n"
+                    " не має потреби додавати цю опцію"
+                )
+
+                LA_exist.setIcon(QMessageBox.Information)
+                LA_exist.setWindowTitle("Already exist")
+                LA_exist.exec_()
+
             for widget in self.list_LA:
                 widget.setEnabled(True)
         else:
@@ -408,12 +450,11 @@ class MainDialog(QDialog):
             self.translate_button.setText("UKR")
         else:
             self.translate_button.setText("EN")
-
-        self.save_config()
         self.retranslate()
 
     def add_new_look(self):
         """Adding up to 3 aditional SpinBoxes"""
+
         if self.looks_count == 1:
             self.label_look_2 = QtWidgets.QLabel(self)
             self.label_look_2.setText(self.label_look.text())
@@ -589,6 +630,12 @@ class MainDialog(QDialog):
             self.label_vent_stop_3.show()
             self.list_vent.append(self.label_vent_stop_3)
 
+            self.label_copyright.setGeometry(
+                QtCore.QRect(30, 450 + 30 * self.count_vent, 300, 80)
+            )
+            self.resize(600, 520 + 30 * self.count_vent)
+            self.show()
+
         elif self.count_vent == 3:
             self.label_vent_start_4 = QtWidgets.QLabel(self)
             self.label_vent_start_4.setText(self.label_vent_start.text())
@@ -637,7 +684,6 @@ class MainDialog(QDialog):
             self.label_vent_stop_4.show()
             self.list_vent.append(self.label_vent_stop_4)
 
-
         else:
             self.pushButton_add_vent.setDisabled(True)
             if self.translate_button.text() == "EN":
@@ -649,6 +695,24 @@ class MainDialog(QDialog):
                     self, "Обдув", "Неможливо додати білше обдувів"
                 )
         self.count_vent += 1
+
+    def set_values_LA(self):
+        """Set values from config.json file"""
+
+        self.gcode_file = sys.argv[1]
+        # if not linear_advance_add.check_LA_in_gcode(self.gcode_file)
+
+        self.checkBox_LA.setChecked(self.load_parameter(self.checkBox_LA.objectName()))
+        self.doubleSpinBox_line_width.setValue(
+            extrusion_width_hight.line_width(self.gcode_file)
+        )
+        self.doubleSpinBox_layer_height.setValue(
+            extrusion_width_hight.layer_higth(self.gcode_file)
+        )
+        self.doubleSpinBox_material_diameter.setValue(1.75)
+        self.doubleSpinBox_material_linear_advance_factor.setValue(
+            self.load_parameter("doubleSpinBox_material_linear_advance_factor")
+        )
 
     def load_parameter(self, name: str):
         try:
@@ -662,10 +726,16 @@ class MainDialog(QDialog):
         except FileNotFoundError:
             # Handle the case when the file is not found
             print("Checkbox state file not found.")
+
         except json.JSONDecodeError:
             # Handle the case when the JSON data is not valid
             print("Invalid JSON data in checkbox state file.")
-
+        if "Spin" in name:
+            return 0
+        elif "translate" in name:
+            return "EN"
+        else:
+            return False
 
     def save_config(self):
 
@@ -804,8 +874,49 @@ class MainDialog(QDialog):
             self.pushButton_add_vent.setText(_translate("MainWindow", "Додати"))
 
 
+class NoFile(QMessageBox):
+    def __init__(self):
+        super().__init__()
+        self.resize(400, 150)
+        self.setWindowTitle("Error")
+        self.setText(
+            "File not specifed. \nUse PostProcessing-Script-for-PrusaSlicer.py <gcode file>."
+        )
+
+        self.setIcon(QMessageBox.Critical)
+
+        self.translate_button = QtWidgets.QPushButton("EN", self)
+        self.translate_button.setGeometry(QtCore.QRect(10, 66, 50, 50))
+        self.translate_button.setObjectName("translate_button")
+        self.translate_button.clicked.connect(self.change_language)
+
+        self.show()
+
+    def change_language(self):
+        if self.translate_button.text() == "EN":
+            self.translate_button.setText("UKR")
+            self.setText(
+                "Вибачте. Але здаеться ви не прикріпили файл.\n"
+                "Виконайте: \n PostProcessing-Script-for-PrusaSlicer.exe <gcode file>\n"
+                "(замість <gcode file> встайте свій файл)."
+            )
+            self.setWindowTitle("Помилка")
+        else:
+            self.translate_button.setText("EN")
+            self.setText(
+                "File not specifed. \nUse PostProcessing-Script-for-PrusaSlicer.py <gcode file>."
+            )
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    dialog = MainDialog()
+    if len(sys.argv) > 1:
+        gcode_file = sys.argv[1]
+        dialog = MainDialog()
+    else:
+        print(
+            "File not specifed. Use PostProcessing-Script-for-PrusaSlicer.py <gcode file>."
+        )
+        alert = NoFile()
 
     sys.exit(app.exec_())
