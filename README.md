@@ -10,7 +10,7 @@ This post-processing script adds utility for the following features:
 
 ## Installation
 
-1. Download the latest release of the post-processing script from the [GitHub repository](https://github.com/Mykhailo1986/GCODE_post-processing).
+1. Download the latest release of the post-processing script from the [GitHub repository](https://github.com/Mykhailo1986/GCODE_post-processing/releases).
 2. Extract the contents of the downloaded ZIP file to a convenient location on your computer.
 
 ## Usage
@@ -55,7 +55,7 @@ If you have any questions, issues, or suggestions, please contact the project ma
 
 ## Установка
 
-1. Завантажте останню версію сценарію пост-обробки з [сховища GitHub](https://github.com/Mykhailo1986/GCODE_post-processing).
+1. Завантажте останню версію сценарію пост-обробки з [сховища GitHub](https://github.com/Mykhailo1986/GCODE_post-processing/releases).
 2. Розпакуйте вміст завантаженого ZIP-файлу в зручне місце на вашому комп'ютері.
 
 ## Використання
