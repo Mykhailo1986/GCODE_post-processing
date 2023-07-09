@@ -10,7 +10,7 @@ This post-processing script adds utility for the following features:
 
 ## Installation
 
-1. Download the latest release of the post-processing script from the [GitHub repository](https://github.com/Mykhailo1986/GCODE_post-processing/releases).
+1. Download the latest release of the post-processing script from the [GitHub repository](https://github.com/Mykhailo1986/GCODE_post_processing/releases).
 2. Extract the contents of the downloaded ZIP file to a convenient location on your computer.
 
 ## Usage
@@ -26,7 +26,7 @@ This post-processing script adds utility for the following features:
 
 ## Contributing
 
-Contributions to this post-processing script are welcome. If you have any bug fixes, improvements, or new feature ideas, please submit them as pull requests on the [GitHub repository](https://github.com/Mykhailo1986/GCODE_post-processing).
+Contributions to this post-processing script are welcome. If you have any bug fixes, improvements, or new feature ideas, please submit them as pull requests on the [GitHub repository](https://github.com/Mykhailo1986/GCODE_post_processing).
 
 ## License
 
@@ -55,7 +55,7 @@ If you have any questions, issues, or suggestions, please contact the project ma
 
 ## Установка
 
-1. Завантажте останню версію сценарію пост-обробки з [сховища GitHub](https://github.com/Mykhailo1986/GCODE_post-processing/releases).
+1. Завантажте останню версію сценарію пост-обробки з [сховища GitHub](https://github.com/Mykhailo1986/GCODE_post_processing/releases).
 2. Розпакуйте вміст завантаженого ZIP-файлу в зручне місце на вашому комп'ютері.
 
 ## Використання
@@ -72,7 +72,7 @@ If you have any questions, issues, or suggestions, please contact the project ma
 
 ## Участь
 
-Участь у цьому проекті по пост-обробці є бажаним. Якщо у вас є ідеї що до  виправлення помилок, поліпшення або нові ідеї щодо функціоналу, будь ласка, надішліть їх у вигляді запитів на злиття (pull requests) у [сховище GitHub](https://github.com/Mykhailo1986/GCODE_post-processing).
+Участь у цьому проекті по пост-обробці є бажаним. Якщо у вас є ідеї що до  виправлення помилок, поліпшення або нові ідеї щодо функціоналу, будь ласка, надішліть їх у вигляді запитів на злиття (pull requests) у [сховище GitHub](https://github.com/Mykhailo1986/GCODE_post_processing).
 
 ## Ліцензія
 
