@@ -1,7 +1,8 @@
 import sys
 
+
 # Get the file path from the command line argument
-# file_path = sys.argv[1]
+# gcode_file = sys.argv[1]
 
 def number_from_string(string: str) -> int or float:
     """Extracts a number from a string, preserving the decimal point if present."""
@@ -25,9 +26,9 @@ def number_from_string(string: str) -> int or float:
 def width_hight() ->tuple:
 
     # Get the file path from the command line argument
-    file_path : str = sys.argv[1]
+    gcode_file : str = sys.argv[1]
     # Open the file in read mode
-    with open(file_path, "r") as file:
+    with open(gcode_file, "r") as file:
         lines = file.readlines()  # Read all lines of the file
         print(type(lines))
     # Count the occurrences of ";AFTER_LAYER_CHANGE"
@@ -41,11 +42,11 @@ def width_hight() ->tuple:
                 height: float = number_from_string(line)
                 return width, height
 
-def line_width(file_path:str) -> float:
+def line_width(gcode_file:str) -> float:
     '''Readin a line width from gcode'''
 
     # Open the file in read mode
-    with open(file_path, "r") as file:
+    with open(gcode_file, "r") as file:
         lines:list = file.readlines()  # Read all lines of the file
     # Check the Slyser
         # Check the Slyser
@@ -61,11 +62,11 @@ def line_width(file_path:str) -> float:
 
 
 
-def layer_higth(file_path) -> float:
+def layer_higth(gcode_file) -> float:
     '''Readin a line higth from gcode'''
 
     # Open the file in read mode
-    with open(file_path, "r") as file:
+    with open(gcode_file, "r") as file:
         lines:list = file.readlines()  # Read all lines of the file
     # Check the Slyser
     if "PrusaSlicer" in lines[0]:

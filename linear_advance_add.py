@@ -1,3 +1,5 @@
+import sys
+import extrusion_width_hight
 
 def check_LA_in_gcode(gcode_file:str)->bool:
     '''return True if Line Advance is already in file'''
@@ -7,7 +9,7 @@ def check_LA_in_gcode(gcode_file:str)->bool:
             if ";LINEARADVANCEPROCESSED" in line:
                 return True
         return False
-def add_LA(gcode_file:str,line_width: float, layer_height : float  , linear_advance_factor: float, material_diameter: float ):
+def add_LA(gcode_file:str,line_width: float, layer_height : float  , linear_advance_factor: float=0.8, material_diameter: float=1.75 ):
     '''Insert Linaer Avance lines in gcodefile'''
 
     if check_LA_in_gcode(gcode_file):
@@ -34,4 +36,25 @@ def add_LA(gcode_file:str,line_width: float, layer_height : float  , linear_adva
     # Write the modified lines back to the file
     with open(gcode_file, "w") as file:
         file.writelines(lines)
+
+if __name__ == "__main__":
+
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'h' or sys.argv[1] == 'help':
+            print("Add '-k' to set the linear advance factor.\nExample: linear_advance_add.py <example.gcode> -k0.8")
+        if sys.argv[2] and "-k" in sys.argv[2]:
+            add_LA(
+                gcode_file=sys.argv[1],
+                line_width=extrusion_width_hight.line_width(gcode_file=sys.argv[1]),
+                layer_height=extrusion_width_hight.layer_higth(gcode_file=sys.argv[1]),
+                linear_advance_factor=extrusion_width_hight.number_from_string(sys.argv[2])
+            )
+        else:
+            add_LA(
+                gcode_file=sys.argv[1],
+                line_width=extrusion_width_hight.line_width(gcode_file=sys.argv[1]),
+                layer_height=extrusion_width_hight.layer_higth(gcode_file=sys.argv[1]))
+    else:
+        print("nExample: linear_advance_add.py <example.gcode> -k0.8")
+
 
