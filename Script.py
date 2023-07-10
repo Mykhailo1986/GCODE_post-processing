@@ -1,6 +1,7 @@
 import sys
 import json
 
+import first_layers_look
 import linear_advance_add
 from fan_layers_control import fan_on_off
 import extrusion_width_hight
@@ -14,7 +15,7 @@ from PyQt5.QtWidgets import (
     QDialog,
     QRadioButton,
     QButtonGroup,
-    QMessageBox, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy,
+    QMessageBox, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QFormLayout,
 )
 
 
@@ -35,11 +36,19 @@ class MainDialog(QDialog):
         self.vertical_layout_main_window_1.addWidget(self.line_1)
 
         self.Arc_layout = Arc_widgets(self)
+        # self.Arc_layout.setFixedSize(450, 100)
         self.vertical_layout_main_window_1.addWidget(self.Arc_layout)
+        self.line_2 = QtWidgets.QFrame(self)
+        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_2.setObjectName("line_2")
+        self.vertical_layout_main_window_1.addWidget(self.line_2)
 
+        self.Look_layout = Look_widgets(self)
+        # self.Look_layout.setFixedSize(450, 100)
+        self.vertical_layout_main_window_1.addWidget(self.Look_layout)
 
         self.translate_button = QtWidgets.QPushButton("EN", self)
-        # self.translate_button.setFixedSize(50, 50)
         self.translate_button.setGeometry(QtCore.QRect(540, 10, 50, 50))
         self.translate_button.setObjectName("translate_button")
 
@@ -80,20 +89,23 @@ class MainDialog(QDialog):
                     "Converting g1 to g2/g3 commands.",
                 )
             )
-            # # Look block.
-            # self.label_checkBox_look.setText(
-            #     _translate(
-            #         "MainWindow",
-            #         "Pause in printing to looking at the model and move to X",
-            #     )
-            # )
-            # self.label_Y.setText(_translate("MainWindow", "and Y"))
-            # self.label_look.setText(_translate("MainWindow", "Look at"))
-            # self.spinBox_layer.setSuffix(_translate("MainDialog", " layer"))
-            # self.pushButton_add_new_look.setText(
-            #     _translate("MainWindow", "Add next stop")
-            # )
-            # self.pushButton_add_new_look.adjustSize()
+            # Look block.
+            self.Look_layout.label_checkBox_look.setText(
+                _translate(
+                    "MainWindow",
+                    "Pause in printing to looking at the model and move to X",
+                )
+            )
+            self.Look_layout.label_Y.setText(_translate("MainWindow", "and Y"))
+            self.Look_layout.label_look.setText(_translate("MainWindow", "Look at"))
+            self.Look_layout.spinBox_layer.setSuffix(_translate("MainDialog", " layer"))
+            self.Look_layout.pushButton_add_new_look.setText(
+                _translate("MainWindow", "Add next stop")
+            )
+            self.Look_layout.pushButton_add_new_look.adjustSize()
+
+
+
             # # Vent block
             # self.label_checkBox_vent.setText(
             #     _translate("MainWindow", "Add lines to make a vent")
@@ -175,8 +187,28 @@ class ParentWidget(QWidget):
             for widget in self.widgets_list:
                 widget.setDisabled(True)
 
-    def some_parent_module(self):
-        print("This is a function in the parent widget.")
+    def load_parameter(self, name: str):
+        try:
+            # Load the JSON data from the file
+            with open("config.json", "r") as file:
+                json_data = file.read()
+
+            # Convert the JSON data to a dictionary
+            data = json.loads(json_data)
+            return data.get(name, False)
+        except FileNotFoundError:
+            # Handle the case when the file is not found
+            print("Checkbox state file not found.")
+
+        except json.JSONDecodeError:
+            # Handle the case when the JSON data is not valid
+            print("Invalid JSON data in checkbox state file.")
+        if "Spin" in name:
+            return 0
+        elif "translate" in name:
+            return "EN"
+        else:
+            return False
 
 class LA_widgets(ParentWidget):
     def __init__(self, parent=None):
@@ -186,8 +218,8 @@ class LA_widgets(ParentWidget):
 
         self.checkBox_LA = QtWidgets.QCheckBox(self)
         self.checkBox_LA.setObjectName("checkBox_LA")
-        self.checkBox_LA.setChecked(False)
-        self.checkBox_LA.clicked.connect(self.checkBox_toggled())
+        self.checkBox_LA.setChecked(self.load_parameter(self.checkBox_LA.objectName()))
+        self.checkBox_LA.clicked.connect(self.checkBox_toggled)
 
         self.horizontal_layout_LA_1.addWidget(self.checkBox_LA)
         self.label_checkBox_LA = QtWidgets.QLabel(self)
@@ -274,26 +306,7 @@ class LA_widgets(ParentWidget):
             (self.doubleSpinBox_material_diameter),
             self.doubleSpinBox_material_linear_advance_factor,
         ]
-
-        #
-        # if self.load_parameter("checkBox_LA"):
-        #     for widget in self.list_LA:
-        #         widget.setEnabled(True)
-        # else:
-        #     for widget in self.list_LA:
-        #         widget.setDisabled(True)
-        #
-        # self.set_values_LA()
-        # self.vertical_layout_LA_8=QVBoxLayout(self)
-        # self.line_1 = QtWidgets.QFrame(self)
-        # # self.line_1.setGeometry(QtCore.QRect(20, 90, 471, 16))
-        # self.line_1.setFrameShape(QtWidgets.QFrame.HLine)
-        # self.line_1.setFrameShadow(QtWidgets.QFrame.Sunken)
-        # self.line_1.setObjectName("line_1")
-        # self.vertical_layout_LA_8.addLayout(self.horizontal_layout_LA_1)
-        # self.vertical_layout_LA_8.addWidget(self.line_1)
-
-
+        self.checkBox_toggled(self.load_parameter(self.checkBox_LA.objectName()))
 
 
 class Arc_widgets(ParentWidget):
@@ -301,56 +314,136 @@ class Arc_widgets(ParentWidget):
         super().__init__(parent)
         self.vertical_layout_Arc_1=QVBoxLayout(self)
 
-        self.Horizontal_layout_Arc_2 = QHBoxLayout(self)
+        self.horizontal_layout_Arc_2 = QFormLayout(self)
+        self.horizontal_layout_Arc_3 = QHBoxLayout(self)
+        self.horizontal_layout_Arc_3.addSpacing(100)
 
 # Second block for converting g1 to g2/g3 commands.
 
         self.checkBox_Arc = QtWidgets.QCheckBox(self)
-        self.checkBox_Arc.setGeometry(QtCore.QRect(30, 110, 411, 20))
         self.checkBox_Arc.setObjectName("checkBox_Arc")
-        # self.checkBox_Arc.setChecked(self.load_parameter("checkBox_Arc"))
-        # self.checkBox_Arc.clicked.connect(self.checkBox_Arc_toggled)
-
+        self.checkBox_Arc.setChecked(self.load_parameter("checkBox_Arc"))
+        self.checkBox_Arc.clicked.connect(self.checkBox_toggled)
+        # self.horizontal_layout_Arc_2.addWidget(self.checkBox_Arc)
         self.label_checkBox_Arc = QtWidgets.QLabel(self)
-        self.label_checkBox_Arc.setGeometry(QtCore.QRect(55, 110, 411, 20))
         self.label_checkBox_Arc.setObjectName("label_checkBox_Arc")
+        # self.horizontal_layout_Arc_2.addWidget(self.label_checkBox_Arc , alignment=QtCore.Qt.AlignLeft)
+        self.horizontal_layout_Arc_2.addRow(self.checkBox_Arc,self.label_checkBox_Arc)
 
         self.arc_group = QButtonGroup()
-        self.radioButton_ArcWeider = QRadioButton(self)
-        self.radioButton_ArcWeider.setGeometry(QtCore.QRect(80, 140, 411, 20))
+        self.radioButton_ArcWeider = QRadioButton(self,text="ArcWeider")
         self.radioButton_ArcWeider.setObjectName("radioButton_ArcWeider")
-        # self.radioButton_ArcWeider.setChecked(
-        #     self.load_parameter("radioButton_ArcWeider")
-        # )
+        self.radioButton_ArcWeider.setChecked(
+            self.load_parameter("radioButton_ArcWeider")      )
         self.arc_group.addButton(self.radioButton_ArcWeider)
-
-        self.label_ArcWeider = QtWidgets.QLabel(self)
-        self.label_ArcWeider.setGeometry(QtCore.QRect(100, 140, 411, 20))
-        self.label_ArcWeider.setObjectName("label_ArcWeider")
-        self.label_ArcWeider.setText("ArcWeider")
-
-        self.radioButton_ArcStraightener = QRadioButton(self)
-        self.radioButton_ArcStraightener.setGeometry(QtCore.QRect(300, 140, 411, 20))
+        self.horizontal_layout_Arc_3.addWidget(self.radioButton_ArcWeider)
+        self.radioButton_ArcStraightener = QRadioButton(self,text="ArcStraightener")
         self.radioButton_ArcStraightener.setObjectName("radioButton_ArcStraightener")
-        # self.radioButton_ArcStraightener.setChecked(
-        #     self.load_parameter("radioButton_ArcStraightener")
-        # )
+        self.radioButton_ArcStraightener.setChecked(
+            self.load_parameter("radioButton_ArcStraightener")        )
         self.arc_group.addButton(self.radioButton_ArcStraightener)
+        self.horizontal_layout_Arc_3.addWidget(self.radioButton_ArcStraightener)
 
-        self.label_ArcStraightener = QtWidgets.QLabel(self)
-        self.label_ArcStraightener.setGeometry(QtCore.QRect(320, 140, 411, 20))
-        self.label_ArcStraightener.setObjectName("label_ArcStraightener")
-        self.label_ArcStraightener.setText("ArcStraightener")
+        self.vertical_layout_Arc_1.addLayout(self.horizontal_layout_Arc_2)
+        self.vertical_layout_Arc_1.addLayout(self.horizontal_layout_Arc_3)
 
-        self.list_arc: list(QtWidgets) = [
+        self.widgets_list: list(QtWidgets) = [
             self.label_checkBox_Arc,
             self.radioButton_ArcWeider,
-            self.label_ArcWeider,
-            self.radioButton_ArcStraightener,
-            self.label_ArcStraightener,
+            self.radioButton_ArcStraightener
         ]
 
-        # self.checkBox_Arc_toggled(self.checkBox_Arc.isChecked())
+        self.checkBox_toggled(self.checkBox_Arc.isChecked())
+
+
+class Look_widgets(ParentWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        # self.vertical_layout_Arc_1=QVBoxLayout(self)
+
+        self.horizontal_layout_Arc_2 = QHBoxLayout(self)
+
+        # self.horizontal_layout_Arc_3 = QHBoxLayout(self)
+        # self.horizontal_layout_Arc_3.addSpacing(100)
+
+        # 3rd block for look at the model
+        self.checkBox_look = QtWidgets.QCheckBox(self)
+
+        self.checkBox_look.setObjectName("checkBox_look")
+        self.checkBox_look.setChecked(self.load_parameter("checkBox_look"))
+        self.checkBox_look.clicked.connect(self.checkBox_toggled)
+        self.horizontal_layout_Arc_2.addWidget(self.checkBox_look)
+
+        self.label_checkBox_look = QtWidgets.QLabel(self)
+
+        self.label_checkBox_look.setObjectName("label_checkBox_look")
+        self.horizontal_layout_Arc_2.addWidget(self.label_checkBox_look)
+        self.bed_size = first_layers_look.bad_size(sys.argv[1])
+
+        self.spinBox_X = QtWidgets.QSpinBox(self)
+        self.spinBox_X.setObjectName("spinBox_X")
+        self.spinBox_X.setMaximum(self.bed_size[0])
+        self.spinBox_X.setWrapping(True)
+        self.spinBox_X.setValue(self.load_parameter("spinBox_X"))
+        self.horizontal_layout_Arc_2.addWidget(self.spinBox_X)
+
+        self.label_Y = QtWidgets.QLabel(self)
+        self.label_Y.setObjectName("label_Y")
+        self.horizontal_layout_Arc_2.addWidget(self.label_Y)
+
+        self.spinBox_Y = QtWidgets.QSpinBox(self)
+        self.spinBox_Y.setObjectName("spinBox_Y")
+        self.spinBox_Y.setMaximum(self.bed_size[1])
+        self.spinBox_Y.setWrapping(True)
+        self.spinBox_Y.setValue(self.load_parameter("spinBox_Y"))
+        self.horizontal_layout_Arc_2.addWidget(self.spinBox_Y,alignment=QtCore.Qt.AlignLeft)
+        self.horizontal_layout_Arc_2.addStretch()
+
+        # self.horizontal_layout_Arc_2.addRow(self.checkBox_look,
+        #                                     self.label_checkBox_look)
+        #                                     # self.spinBox_X,
+        #                                     # self.label_Y,
+        #                                     # self.spinBox_X)
+
+        self.label_look = QtWidgets.QLabel(self)
+        self.label_look.setGeometry(QtCore.QRect(70, 220, 65, 20))
+        self.label_look.setObjectName("label_look")
+
+        self.spinBox_layer = QtWidgets.QSpinBox(self)
+        self.spinBox_layer.setGeometry(QtCore.QRect(140, 220, 60, 20))
+        self.spinBox_layer.setObjectName("spinBox_layer")
+        self.spinBox_layer.setValue(2)
+
+
+        self.looks_count: int = 1
+
+        self.pushButton_add_new_look = QtWidgets.QPushButton(self)
+        self.pushButton_add_new_look.setGeometry(QtCore.QRect(260, 215, 70, 30))
+        self.pushButton_add_new_look.setObjectName("pushButton_add_new_look")
+        self.pushButton_add_new_look.clicked.connect(self.add_new_look)
+
+        self.widgets_list: list(QtWidgets) = [
+            self.label_checkBox_look,
+            self.spinBox_X,
+            self.label_Y,
+            self.spinBox_Y,
+            self.label_look,
+            self.spinBox_layer,
+            self.pushButton_add_new_look,
+        ]
+
+        self.checkBox_toggled(self.load_parameter("checkBox_look"))
+    def add_new_look(self):
+        """Adding up to 3 aditional SpinBoxes"""
+
+        if self.looks_count == 1:
+            self.label_look_2 = QtWidgets.QLabel(self)
+            self.label_look_2.setText(self.label_look.text())
+            self.label_look_2.setGeometry(
+                QtCore.QRect(70, 220 + 30 * self.looks_count, 65, 20)
+            )
+            self.label_look_2.setObjectName("label_look_2")
+            self.label_look_2.show()
 
 
 

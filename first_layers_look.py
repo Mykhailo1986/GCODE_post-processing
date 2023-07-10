@@ -1,7 +1,34 @@
 import sys
 from extrusion_width_hight import number_from_string
 
-def pause_after_brim(gcode_file:str, X:int=220, Y:int=220, brim_layer_count:int=0):
+def peculiar_function(line:str):
+    '''Return X and Y from line'''
+    a,x,b,y=line.split(",")
+    a, b = x.split("x")
+    x=int(a)-int(b)
+    a, b = y.split("x")
+    y =  int(b)-int(a)
+    return x,y
+
+
+def bad_size(gcode_file:str)->tuple:
+    '''read in gcode bad size'''
+    try:
+       with open(gcode_file, "r") as file:
+        lines: list[str] = file.readlines()  # Read all lines of the file
+        for line in reversed(lines):
+            if "bed_shape = " in line:
+                # k:int=line.index("x", line.index("x", line.index("x") + 1) + 1)
+                # pre_x:int= int(line[k-3:k])
+                # pre_y:int= int(line[k+1:k+4])
+                # x, y = line[line.index("x") - 1], line[line.index("x") + 1]
+                # x=pre_x-int(x)
+                # y = pre_y - int(y)
+                return peculiar_function(line)
+    except:
+        return 500,500
+
+def pause_after_brim(gcode_file:str, X:int=1, Y:int=220, brim_layer_count:int=0):
     '''Adds stops in printing after last brim to give possibility to look at the specific layer'''
     # Open the file in read mode
     with open(gcode_file, "r") as file:
