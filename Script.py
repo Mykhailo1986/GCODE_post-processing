@@ -29,24 +29,21 @@ class MainDialog(QDialog):
         self.LA_layout=LA_widgets(self)
         self.LA_layout.setFixedSize(450,100)
         self.vertical_layout_main_window_1.addWidget(self.LA_layout)
-        self.line_1 = QtWidgets.QFrame(self)
-        self.line_1.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_1.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_1.setObjectName("line_1")
+        self.line_1 = Line(self)
         self.vertical_layout_main_window_1.addWidget(self.line_1)
 
         self.Arc_layout = Arc_widgets(self)
         # self.Arc_layout.setFixedSize(450, 100)
         self.vertical_layout_main_window_1.addWidget(self.Arc_layout)
-        self.line_2 = QtWidgets.QFrame(self)
-        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_2.setObjectName("line_2")
+        self.line_2 = Line(self)
         self.vertical_layout_main_window_1.addWidget(self.line_2)
 
         self.Look_layout = Look_widgets(self)
         # self.Look_layout.setFixedSize(450, 100)
         self.vertical_layout_main_window_1.addWidget(self.Look_layout)
+        self.line_3 = Line(self)
+        self.vertical_layout_main_window_1.addWidget(self.line_3)
+
 
         self.translate_button = QtWidgets.QPushButton("EN", self)
         self.translate_button.setGeometry(QtCore.QRect(540, 10, 50, 50))
@@ -96,7 +93,10 @@ class MainDialog(QDialog):
                     "Pause in printing to looking at the model and move to X",
                 )
             )
+
             self.Look_layout.label_Y.setText(_translate("MainWindow", "and Y"))
+            self.Look_layout.label_brim.setText(_translate("MainWindow", "Pause after brim"))
+
             self.Look_layout.label_look.setText(_translate("MainWindow", "Look at"))
             self.Look_layout.spinBox_layer.setSuffix(_translate("MainDialog", " layer"))
             self.Look_layout.pushButton_add_new_look.setText(
@@ -209,6 +209,21 @@ class ParentWidget(QWidget):
             return "EN"
         else:
             return False
+
+# class Line(QWidget):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#         self.line = QtWidgets.QFrame(self)
+#         self.line.setFrameShape(QtWidgets.QFrame.HLine)
+#         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+#         self.line.setObjectName("line")
+
+class Line(QtWidgets.QFrame):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFrameShape(QtWidgets.QFrame.HLine)
+        self.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.setObjectName("line")
 
 class LA_widgets(ParentWidget):
     def __init__(self, parent=None):
@@ -359,25 +374,31 @@ class Arc_widgets(ParentWidget):
 class Look_widgets(ParentWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        # self.vertical_layout_Arc_1=QVBoxLayout(self)
+        self.vertical_layout_look_1=QVBoxLayout(self)
 
-        self.horizontal_layout_Arc_2 = QHBoxLayout(self)
+        self.horizontal_layout_look_2 = QHBoxLayout(self)
+        self.horizontal_layout_look_3 = QHBoxLayout(self)
+        self.horizontal_layout_look_4 = QHBoxLayout(self)
+        self.horizontal_layout_look_4.setContentsMargins(50, 0, 0, 0)
+        self.vertical_layout_look_5 = QVBoxLayout(self)
+        self.horizontal_layout_look_6 = QHBoxLayout(self)
+
+        self.form_layout_look = QFormLayout(self)
 
         # self.horizontal_layout_Arc_3 = QHBoxLayout(self)
         # self.horizontal_layout_Arc_3.addSpacing(100)
 
         # 3rd block for look at the model
         self.checkBox_look = QtWidgets.QCheckBox(self)
-
         self.checkBox_look.setObjectName("checkBox_look")
         self.checkBox_look.setChecked(self.load_parameter("checkBox_look"))
         self.checkBox_look.clicked.connect(self.checkBox_toggled)
-        self.horizontal_layout_Arc_2.addWidget(self.checkBox_look)
+        self.horizontal_layout_look_2.addWidget(self.checkBox_look)
 
         self.label_checkBox_look = QtWidgets.QLabel(self)
 
         self.label_checkBox_look.setObjectName("label_checkBox_look")
-        self.horizontal_layout_Arc_2.addWidget(self.label_checkBox_look)
+        self.horizontal_layout_look_2.addWidget(self.label_checkBox_look)
         self.bed_size = first_layers_look.bad_size(sys.argv[1])
 
         self.spinBox_X = QtWidgets.QSpinBox(self)
@@ -385,36 +406,76 @@ class Look_widgets(ParentWidget):
         self.spinBox_X.setMaximum(self.bed_size[0])
         self.spinBox_X.setWrapping(True)
         self.spinBox_X.setValue(self.load_parameter("spinBox_X"))
-        self.horizontal_layout_Arc_2.addWidget(self.spinBox_X)
+        self.horizontal_layout_look_2.addWidget(self.spinBox_X)
 
         self.label_Y = QtWidgets.QLabel(self)
         self.label_Y.setObjectName("label_Y")
-        self.horizontal_layout_Arc_2.addWidget(self.label_Y)
+        self.horizontal_layout_look_2.addWidget(self.label_Y)
 
         self.spinBox_Y = QtWidgets.QSpinBox(self)
         self.spinBox_Y.setObjectName("spinBox_Y")
         self.spinBox_Y.setMaximum(self.bed_size[1])
         self.spinBox_Y.setWrapping(True)
         self.spinBox_Y.setValue(self.load_parameter("spinBox_Y"))
-        self.horizontal_layout_Arc_2.addWidget(self.spinBox_Y,alignment=QtCore.Qt.AlignLeft)
-        self.horizontal_layout_Arc_2.addStretch()
+        self.horizontal_layout_look_2.addWidget(self.spinBox_Y,alignment=QtCore.Qt.AlignLeft)
+        self.horizontal_layout_look_2.addStretch()
 
-        # self.horizontal_layout_Arc_2.addRow(self.checkBox_look,
-        #                                     self.label_checkBox_look)
-        #                                     # self.spinBox_X,
-        #                                     # self.label_Y,
-        #                                     # self.spinBox_X)
+        self.vertical_layout_look_1.addLayout(self.horizontal_layout_look_2)
+
+        self.horizontal_layout_look_3.addSpacing(50)
+        self.checkBox_brim=QtWidgets.QCheckBox(self)
+        self.checkBox_brim.setObjectName("checkBox_brim")
+        self.checkBox_brim.setChecked(self.load_parameter("checkBox_look"))
+        self.checkBox_brim.clicked.connect(self.checkBox_brim_toggled)
+        self.horizontal_layout_look_3.addWidget(self.checkBox_brim, alignment=QtCore.Qt.AlignRight)
+        # self.horizontal_layout_look_2 = QHBoxLayout(self)
+
+        self.label_brim=QtWidgets.QLabel(self)
+        self.label_brim.setObjectName("label_brim")
+        self.horizontal_layout_look_3.addWidget(self.label_brim, alignment=QtCore.Qt.AlignLeft)
+        self.horizontal_layout_look_3.addStretch()
+
+        # self.form_layout_look.addRow(self.checkBox_brim,self.label_brim)
+
+        self.vertical_layout_look_1.addLayout(self.horizontal_layout_look_3)
+
+
+
+        self.layer_look_list:list[QtWidgets]=list()
 
         self.label_look = QtWidgets.QLabel(self)
-        self.label_look.setGeometry(QtCore.QRect(70, 220, 65, 20))
+
         self.label_look.setObjectName("label_look")
+        self.horizontal_layout_look_4.addWidget(self.label_look)
+        self.layer_look_list.append(self.label_look)
 
         self.spinBox_layer = QtWidgets.QSpinBox(self)
-        self.spinBox_layer.setGeometry(QtCore.QRect(140, 220, 60, 20))
+
         self.spinBox_layer.setObjectName("spinBox_layer")
-        self.spinBox_layer.setValue(2)
+        self.spinBox_layer.setMaximum(500000)
+        self.layer_look_list.append(self.label_look)
+        self.horizontal_layout_look_4.addWidget(self.spinBox_layer)
+
+        self.pushButton_rem_new_look = QtWidgets.QPushButton(self)
+        self.pushButton_rem_new_look.setText("Delete")
+        self.pushButton_rem_new_look.setObjectName("pushButton_rem_new_look")
+
+        self.pushButton_rem_new_look.clicked.connect(self.remove_new_look)
+        self.horizontal_layout_look_4.addWidget(self.pushButton_rem_new_look)
+        # self.horizontal_layout_look_4.addStretch()
+
+        self.vertical_layout_look_5.addLayout(self.horizontal_layout_look_4)
+
+        self.horizontal_layout_look_6.addLayout(self.vertical_layout_look_5)
 
 
+
+
+
+
+        # self.vertical_layout_look_1.addLayout(self.horizontal_layout_look_5)
+        # self.form_layout_look.addRow(self.label_look, self.spinBox_layer)
+        # self.horizontal_layout_look_4.addLayout(self.form_layout_look)
         self.looks_count: int = 1
 
         self.pushButton_add_new_look = QtWidgets.QPushButton(self)
@@ -422,6 +483,12 @@ class Look_widgets(ParentWidget):
         self.pushButton_add_new_look.setObjectName("pushButton_add_new_look")
         self.pushButton_add_new_look.clicked.connect(self.add_new_look)
 
+        self.horizontal_layout_look_6.addWidget(self.pushButton_add_new_look, alignment=QtCore.Qt.AlignCenter)
+        # self.horizontal_layout_look_6.addStretch()
+        self.vertical_layout_look_1.addLayout(self.horizontal_layout_look_6)
+
+        # self.horizontal_layout_look_3.addWidget(self.pushButton_add_new_look)
+        # self.vertical_layout_look_1.addLayout(self.horizontal_layout_look_4)
         self.widgets_list: list(QtWidgets) = [
             self.label_checkBox_look,
             self.spinBox_X,
@@ -430,20 +497,54 @@ class Look_widgets(ParentWidget):
             self.label_look,
             self.spinBox_layer,
             self.pushButton_add_new_look,
+            self.checkBox_brim,
+            self.label_brim,
+            self.pushButton_rem_new_look,
         ]
 
         self.checkBox_toggled(self.load_parameter("checkBox_look"))
+
+    def remove_new_look(self):
+        pass
     def add_new_look(self):
         """Adding up to 3 aditional SpinBoxes"""
 
-        if self.looks_count == 1:
-            self.label_look_2 = QtWidgets.QLabel(self)
-            self.label_look_2.setText(self.label_look.text())
-            self.label_look_2.setGeometry(
-                QtCore.QRect(70, 220 + 30 * self.looks_count, 65, 20)
-            )
-            self.label_look_2.setObjectName("label_look_2")
-            self.label_look_2.show()
+        horizontal_layout=QHBoxLayout(self)
+        horizontal_layout.setContentsMargins(50, 0, 0, 0)
+        label_look = QtWidgets.QLabel(self)
+        label_look.setText(self.label_look.text())
+        self.layer_look_list.append(label_look)
+        self.widgets_list.append(label_look)
+        horizontal_layout.addWidget(label_look)
+
+        spinBox_layer = QtWidgets.QSpinBox(self)
+        spinBox_layer.setSuffix(self.spinBox_layer.suffix())
+        spinBox_layer.setMaximum(500000)
+        self.layer_look_list.append(spinBox_layer)
+        self.widgets_list.append(spinBox_layer)
+        horizontal_layout.addWidget(spinBox_layer)
+
+        pushButton_rem_new_look = QtWidgets.QPushButton(self)
+        pushButton_rem_new_look.setText(self.pushButton_rem_new_look.text())
+        pushButton_rem_new_look.clicked.connect(self.remove_new_look)
+        self.layer_look_list.append(pushButton_rem_new_look)
+        self.widgets_list.append(pushButton_rem_new_look)
+        horizontal_layout.addWidget(pushButton_rem_new_look)
+
+
+        self.vertical_layout_look_5.addLayout(horizontal_layout)
+        self.horizontal_layout_look_6.addLayout(self.vertical_layout_look_5)
+
+
+
+
+    def checkBox_brim_toggled(self, is_checked):
+        """Check if the brim CheckBox is toggled"""
+        if is_checked:
+            self.label_brim.setEnabled(True)
+        else:
+            self.label_brim.setDisabled(True)
+
 
 
 
