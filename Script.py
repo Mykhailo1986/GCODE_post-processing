@@ -3,7 +3,7 @@ import json
 
 import first_layers_look
 import linear_advance_add
-from fan_layers_control import fan_on_off
+import fan_layers_control
 import extrusion_width_hight
 from linear_advance_add import add_LA
 from first_layers_look import layer_look
@@ -61,7 +61,7 @@ class MainDialog(QDialog):
         self.pushButton_run.setFont(QFont("Arial", 14, 75, True))
         self.pushButton_run.setText("Run")
         self.pushButton_run.setStyleSheet("color: green")
-        # self.pushButton_run.clicked.connect(self.run)
+        self.pushButton_run.clicked.connect(self.run)
         # self.horizontal_layout_main_window_2.addWidget(self.fan_layout)
         # self.horizontal_layout_main_window_2.addWidget(self.pushButton_run)
         # self.vertical_layout_main_window_1.addLayout(self.horizontal_layout_main_window_2)
@@ -185,11 +185,74 @@ class MainDialog(QDialog):
             self.fan_layout.pushButton_add_vent.setText(_translate("MainWindow", "Додати"))
 
     def change_language(self):
+
         if self.translate_button.text() == "EN":
             self.translate_button.setText("Укр")
         else:
             self.translate_button.setText("EN")
         self.retranslate()
+
+    def run(self):
+        "Aplly  all changes"
+
+        # self.save_config()
+        if self.fan_layout.checkBox_vent.isChecked():
+
+            for i, widget in enumerate(self.fan_layout.widgets_list):
+                print(widget.objectName())
+                if widget.objectName()=="spinBox_vent_start":
+                    # print ("vent",widget.value() )
+                    # print( "power1",self.fan_layout.widgets_list[i+2].value())
+                    fan_layers_control.fan_on(sys.argv[1], widget.value(), self.fan_layout.widgets_list[i+2].value())
+                if widget.objectName()=="spinBox_vent_stop":
+                    fan_layers_control.fan_off(sys.argv[1], widget.value())
+
+
+        # if self.checkBox_LA.isChecked():
+        #
+        #     add_LA(
+        #         gcode_file,
+        #         self.doubleSpinBox_line_width.value(),
+        #         self.doubleSpinBox_layer_height.value(),
+        #         self.doubleSpinBox_material_linear_advance_factor.value(),
+        #         self.doubleSpinBox_material_diameter.value(),
+        #     )
+        # if self.checkBox_look.isChecked():
+        #     layer_look(
+        #         gcode_file,
+        #         self.spinBox_layer.value(),
+        #         self.spinBox_X.value(),
+        #         self.spinBox_Y.value(),
+        #     )
+        #     try:
+        #         layer_look(
+        #             gcode_file,
+        #             self.spinBox_layer_2.value(),
+        #             self.spinBox_X_2.value(),
+        #             self.spinBox_Y_2.value(),
+        #         )
+        #         layer_look(
+        #             self.spinBox_layer_3.value(),
+        #             self.spinBox_X_3.value(),
+        #             self.spinBox_Y_3.value(),
+        #         )
+        #         layer_look(
+        #             gcode_file,
+        #             self.spinBox_layer_4.value(),
+        #             self.spinBox_X_4.value(),
+        #             self.spinBox_Y_4.value(),
+        #         )
+        #     except:
+        #         pass
+        # if self.checkBox_Arc.isChecked():
+        #     if self.radioButton_ArcWeider.isChecked():
+        #         arc_weider(gcode_file)
+        #     if self.radioButton_ArcStraightener.isChecked():
+        #         arc_straightener(gcode_file)
+
+        # sys.exit()
+
+
 
 class ParentWidget(QWidget):
     def __init__(self, parent=None):
