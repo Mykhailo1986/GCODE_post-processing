@@ -6,7 +6,7 @@ import linear_advance_add
 import fan_layers_control
 import extrusion_width_hight
 from linear_advance_add import add_LA
-from first_layers_look import layer_look
+import first_layers_look
 from arc_helper import arc_weider, arc_straightener
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QFont
@@ -197,64 +197,79 @@ class MainDialog(QDialog):
         self.retranslate()
 
     def run(self):
-        "Aplly  all changes"
+        "Apply  all changes"
 
-        # self.save_config()
+        self.save_config()
+
+        if self.LA_layout.checkBox_LA.isChecked():
+            add_LA(
+                sys.argv[1],
+                self.LA_layout.doubleSpinBox_line_width.value(),
+                self.LA_layout.doubleSpinBox_layer_height.value(),
+                self.LA_layout.doubleSpinBox_material_linear_advance_factor.value(),
+                self.LA_layout.doubleSpinBox_material_diameter.value(),
+            )
+
+        if self.arc_layout.checkBox_Arc.isChecked():
+            if self.arc_layout.radioButton_ArcWeider.isChecked():
+                arc_weider(sys.argv[1])
+            if self.arc_layout.radioButton_ArcStraightener.isChecked():
+                arc_straightener(sys.argv[1])
+
+        if self.look_layout.checkBox_look.isChecked():
+            if self.look_layout.checkBox_brim.isChecked():
+                first_layers_look.pause_after_brim(sys.argv[1],
+                                                   self.spinBox_X.value(),
+                                                   self.spinBox_Y.value(),
+                                                   1
+                                                   )
+
+            for widget in self.look_layout.widgets_list:
+                if widget.objectName() == "spinBox_layer" and widget.value()>0:
+                    first_layers_look.layer_look(
+                        sys.argv[1],
+                        widget.value(),
+                        self.spinBox_X.value(),
+                        self.spinBox_Y.value(),
+                    )
+
         if self.fan_layout.checkBox_vent.isChecked():
-
             for i, widget in enumerate(self.fan_layout.widgets_list):
-                print(widget.objectName())
-                if widget.objectName()=="spinBox_vent_start":
+                if widget.objectName() == "spinBox_vent_start":
                     # print ("vent",widget.value() )
                     # print( "power1",self.fan_layout.widgets_list[i+2].value())
-                    fan_layers_control.fan_on(sys.argv[1], widget.value(), self.fan_layout.widgets_list[i+2].value())
-                if widget.objectName()=="spinBox_vent_stop":
+                    fan_layers_control.fan_on(sys.argv[1], widget.value(), self.fan_layout.widgets_list[i + 2].value())
+                if widget.objectName() == "spinBox_vent_stop":
                     fan_layers_control.fan_off(sys.argv[1], widget.value())
 
-
-        # if self.checkBox_LA.isChecked():
-        #
-        #     add_LA(
-        #         gcode_file,
-        #         self.doubleSpinBox_line_width.value(),
-        #         self.doubleSpinBox_layer_height.value(),
-        #         self.doubleSpinBox_material_linear_advance_factor.value(),
-        #         self.doubleSpinBox_material_diameter.value(),
-        #     )
-        # if self.checkBox_look.isChecked():
-        #     layer_look(
-        #         gcode_file,
-        #         self.spinBox_layer.value(),
-        #         self.spinBox_X.value(),
-        #         self.spinBox_Y.value(),
-        #     )
-        #     try:
-        #         layer_look(
-        #             gcode_file,
-        #             self.spinBox_layer_2.value(),
-        #             self.spinBox_X_2.value(),
-        #             self.spinBox_Y_2.value(),
-        #         )
-        #         layer_look(
-        #             self.spinBox_layer_3.value(),
-        #             self.spinBox_X_3.value(),
-        #             self.spinBox_Y_3.value(),
-        #         )
-        #         layer_look(
-        #             gcode_file,
-        #             self.spinBox_layer_4.value(),
-        #             self.spinBox_X_4.value(),
-        #             self.spinBox_Y_4.value(),
-        #         )
-        #     except:
-        #         pass
-        # if self.checkBox_Arc.isChecked():
-        #     if self.radioButton_ArcWeider.isChecked():
-        #         arc_weider(gcode_file)
-        #     if self.radioButton_ArcStraightener.isChecked():
-        #         arc_straightener(gcode_file)
-
         # sys.exit()
+    def save_config(self):
+
+        data = {
+            "checkBox_LA": self.LA_layout.checkBox_LA.isChecked(),
+            "checkBox_Arc": self.arc_layout.checkBox_Arc.isChecked(),
+            "checkBox_look": self.look_layout.checkBox_look.isChecked(),
+            "checkBox_brim": self.look_layout.checkBox_brim.isChecked(),
+            "checkBox_vent": self.fan_layout.checkBox_vent.isChecked(),
+
+            "radioButton_ArcStraightener": self.arc_layout.radioButton_ArcStraightener.isChecked(),
+            "radioButton_ArcWeider": self.arc_layout.radioButton_ArcWeider.isChecked(),
+            "doubleSpinBox_material_linear_advance_factor": self.LA_layout.doubleSpinBox_material_linear_advance_factor.value(),
+            "spinBox_X": self.look_layout.spinBox_X.value(),
+            "spinBox_Y": self.look_layout.spinBox_Y.value(),
+            "translate_button": self.translate_button.text(),
+        }
+        # Convert the dictionary to JSON
+        json_data = json.dumps(data)
+
+        # Save the JSON data to a file
+        with open("config.json", "w") as file:
+            file.write(json_data)
+
+    def closeEvent(self, event):
+        """save parameters before exit"""
+        self.save_config()
+        event.accept()
 
 
 
