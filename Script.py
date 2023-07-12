@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import (
 class MainDialog(QDialog):
     def __init__(self):
         super().__init__()
-
+        self.resize(600, 520)
         self.setWindowTitle(f"Post Processing: {sys.argv[1]}" )
         self.vertical_layout_main_window_1 = QVBoxLayout(self)
         self.horizontal_layout_main_window_2 = QVBoxLayout(self)
@@ -58,6 +58,7 @@ class MainDialog(QDialog):
         self.pushButton_run = QtWidgets.QPushButton(self)
 
         self.pushButton_run.setObjectName("pushButton_add_vent")
+        self.pushButton_run.setGeometry(QtCore.QRect(500, 420, 80, 80))
         self.pushButton_run.setFont(QFont("Arial", 14, 75, True))
         self.pushButton_run.setText("Run")
         self.pushButton_run.setStyleSheet("color: green")
@@ -66,6 +67,8 @@ class MainDialog(QDialog):
         # self.horizontal_layout_main_window_2.addWidget(self.pushButton_run)
         # self.vertical_layout_main_window_1.addLayout(self.horizontal_layout_main_window_2)
 
+
+
         self.retranslate()
         self.show()
 
@@ -73,8 +76,8 @@ class MainDialog(QDialog):
         """Retranslate the widgets"""
         _translate = QtCore.QCoreApplication.translate
         if self.translate_button.text() == "Укр":
-            self.resize(600, 520)
-            self.pushButton_run.setGeometry(QtCore.QRect(500, 420, 80, 80))
+            # self.resize(600, 520)
+            # self.pushButton_run.setGeometry(QtCore.QRect(500, 420, 80, 80))
             self.setWindowTitle(_translate("MainDialog", f"Post Processing: {sys.argv[1]}"))
             # LA block
             self.LA_layout.label_checkBox_LA.setText(_translate("MainDialog", "Linear Advance"))
@@ -109,7 +112,7 @@ class MainDialog(QDialog):
 
             self.look_layout.label_Y.setText(_translate("MainWindow", "and Y"))
             self.look_layout.label_brim.setText(_translate("MainWindow", "Pause after brim"))
-
+            self.look_layout.pushButton_rem_new_look.setText(_translate("MainWindow", "Delete"))
             self.look_layout.label_look.setText(_translate("MainWindow", "Look at"))
             self.look_layout.spinBox_layer.setSuffix(_translate("MainDialog", " layer"))
             self.look_layout.pushButton_add_new_look.setText(
@@ -130,8 +133,8 @@ class MainDialog(QDialog):
             self.fan_layout.spinBox_vent_stop.setSuffix(_translate("MainDialog", " layer"))
             self.fan_layout.pushButton_add_vent.setText(_translate("MainWindow", "Add"))
         else:
-            self.resize(650, 520)
-            self.pushButton_run.setGeometry(QtCore.QRect(550, 420, 80, 80))
+            # self.resize(650, 520)
+            # self.pushButton_run.setGeometry(QtCore.QRect(550, 420, 80, 80))
             self.setWindowTitle(_translate("MainDialog", f"Пост Обробка: {sys.argv[1]}"))
             # LA block
             self.LA_layout.label_checkBox_LA.setText(_translate("MainDialog", "Linear Advance"))
@@ -164,7 +167,8 @@ class MainDialog(QDialog):
 
 
             self.look_layout.label_Y.setText(_translate("MainWindow", "та Y"))
-
+            self.look_layout.label_brim.setText(_translate("MainWindow", "Зупинка після краю (brim)"))
+            self.look_layout.pushButton_rem_new_look.setText(_translate("MainWindow", "Видалити"))
             self.look_layout.label_look.setText(_translate("MainWindow", "Глянути на"))
 
             self.look_layout.spinBox_layer.setSuffix(_translate("MainDialog", " шар"))
@@ -462,7 +466,8 @@ class Look_widgets(ParentWidget):
         self.horizontal_layout_look_2 = QHBoxLayout(self)
         self.horizontal_layout_look_3 = QHBoxLayout(self)
         self.horizontal_layout_look_4 = QHBoxLayout(self)
-        self.horizontal_layout_look_4.setContentsMargins(50, 0, 0, 0)
+        self.horizontal_layout_look_4.addSpacing(50)
+        # self.horizontal_layout_look_4.setContentsMargins(50, 0, 0, 0)
         self.vertical_layout_look_5 = QVBoxLayout(self)
         self.horizontal_layout_look_6 = QHBoxLayout(self)
 
@@ -540,7 +545,7 @@ class Look_widgets(ParentWidget):
         self.horizontal_layout_look_4.addWidget(self.spinBox_layer)
 
         self.pushButton_rem_new_look = QtWidgets.QPushButton(self)
-        self.pushButton_rem_new_look.setText("Delete")
+
         self.pushButton_rem_new_look.setObjectName("pushButton_rem_new_look")
 
         self.pushButton_rem_new_look.clicked.connect(self.remove_new_look)
@@ -591,12 +596,16 @@ class Look_widgets(ParentWidget):
 
     def remove_new_look(self):
         '''Remove button with 3 previous added items'''
+        if self.pushButton_rem_new_look == self.sender():
+            self.spinBox_layer.setValue(0)
+            return
+
         index:int=None
         for i, widget in enumerate(self.widgets_list):
             if widget == self.sender():  # Find the index of the clicked button
                 index = i
                 break
-        if  index is not None and self.pushButton_rem_new_look != self.widgets_list[index]:
+        if  index is not None:
             self.widgets_list[index].setParent(None)
             self.widgets_list[index - 1].setParent(None)
             self.widgets_list[index - 2].setParent(None)
@@ -650,28 +659,189 @@ class Look_widgets(ParentWidget):
 
 
 
+# class Fan_widgets(ParentWidget):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#
+#         self.vertical_layout_fan_1 = QVBoxLayout(self)
+#         self.horizontal_layout_fan_2 = QHBoxLayout(self)
+#         self.horizontal_layout_fan_3 = QHBoxLayout(self)
+#         self.vertical_layout_fan_4 = QVBoxLayout(self)
+#         self.horizontal_layout_fan_5 = QHBoxLayout(self)
+#
+#         self.checkBox_vent = QtWidgets.QCheckBox(self)
+#
+#         self.checkBox_vent.setObjectName("checkBox_vent")
+#         self.checkBox_vent.setChecked(self.load_parameter("checkBox_vent"))
+#         self.checkBox_vent.clicked.connect(self.checkBox_toggled)
+#         self.horizontal_layout_fan_2.addWidget(self.checkBox_vent)
+#         self.label_checkBox_vent = QtWidgets.QLabel(self)
+#
+#         self.label_checkBox_vent.setObjectName("label_checkBox_vent")
+#         self.horizontal_layout_fan_2.addWidget(self.label_checkBox_vent)
+#         self.horizontal_layout_fan_2.addStretch()
+#         self.vertical_layout_fan_1.addLayout(self.horizontal_layout_fan_2)
+#
+#
+#
+#
+#
+#         self.label_vent_start = QtWidgets.QLabel(self)
+#         self.label_vent_start.setObjectName("label_vent_start")
+#         self.horizontal_layout_fan_5.addWidget(self.label_vent_start)
+#
+#         self.spinBox_vent_start = QtWidgets.QSpinBox(self)
+#         self.spinBox_vent_start.setFixedWidth(65)
+#         self.spinBox_vent_start.setObjectName("spinBox_vent_start")
+#         self.spinBox_vent_start.setMaximum(500000)
+#
+#         self.horizontal_layout_fan_5.addWidget(self.spinBox_vent_start)
+#
+#         self.label_vent_power = QtWidgets.QLabel(self)
+#         self.label_vent_power.setObjectName("label_vent_power")
+#         self.horizontal_layout_fan_5.addWidget(self.label_vent_power)
+#
+#         self.spinBox_vent_power = QtWidgets.QSpinBox(self)
+#         self.spinBox_vent_power.setMaximum(255)
+#         self.spinBox_vent_power.setValue(255)
+#         self.spinBox_vent_power.setWrapping(True)
+#         self.spinBox_vent_power.setObjectName("spinBox_vent_power")
+#         self.horizontal_layout_fan_5.addWidget(self.spinBox_vent_power)
+#
+#         self.label_vent_stop = QtWidgets.QLabel(self)
+#         self.label_vent_stop.setObjectName("label_vent_stop")
+#         self.horizontal_layout_fan_5.addWidget(self.label_vent_stop)
+#
+#         self.spinBox_vent_stop = QtWidgets.QSpinBox(self)
+#         self.spinBox_vent_stop.setMaximum(500000)
+#         self.spinBox_vent_stop.setFixedWidth(65)
+#         self.spinBox_vent_stop.setObjectName("spinBox_vent_stop")
+#         self.horizontal_layout_fan_5.addWidget(self.spinBox_vent_stop)
+#
+#         self.vertical_layout_fan_4.addLayout(self.horizontal_layout_fan_5)
+#         self.horizontal_layout_fan_3.addLayout(self.vertical_layout_fan_4)
+#
+#
+#         self.pushButton_add_vent = QtWidgets.QPushButton(self)
+#
+#         self.pushButton_add_vent.setObjectName("pushButton_add_vent")
+#         self.pushButton_add_vent.clicked.connect(self.add_new_vent)
+#         self.horizontal_layout_fan_3.addWidget(self.pushButton_add_vent)
+#         self.horizontal_layout_fan_3.addStretch()
+#         self.vertical_layout_fan_1.addLayout(self.horizontal_layout_fan_3)
+#
+#         self.count_vent: int = 1
+#
+#         self.widgets_list: list(QtWidgets) = [
+#             self.label_checkBox_vent,
+#             self.label_vent_start,
+#             self.spinBox_vent_start,
+#             self.label_vent_power,
+#             self.spinBox_vent_power,
+#             self.spinBox_vent_stop,
+#             self.label_vent_stop,
+#             self.pushButton_add_vent,
+#         ]
+#
+#         self.checkBox_toggled(self.load_parameter("checkBox_vent"))
+#
+#     def add_new_vent(self):
+#         horizontal_layout=QHBoxLayout(self)
+#         label_vent_start = QtWidgets.QLabel(self)
+#         label_vent_start.setText(self.label_vent_start.text())
+#         label_vent_start.setObjectName("label_vent_start")
+#         horizontal_layout.addWidget(label_vent_start)
+#         self.widgets_list.append(label_vent_start)
+#
+#         spinBox_vent_start = QtWidgets.QSpinBox(self)
+#         spinBox_vent_start.setMaximum(500000)
+#         spinBox_vent_start.setFixedWidth(65)
+#         spinBox_vent_start.setSuffix(self.spinBox_vent_start.suffix())
+#         spinBox_vent_start.setObjectName("spinBox_vent_start")
+#         horizontal_layout.addWidget(spinBox_vent_start)
+#         self.widgets_list.append(spinBox_vent_start)
+#
+#         label_vent_power = QtWidgets.QLabel(self)
+#         label_vent_power.setText(self.label_vent_power.text())
+#         label_vent_power.setObjectName("label_vent_power")
+#         horizontal_layout.addWidget(label_vent_power)
+#         self.widgets_list.append(label_vent_power)
+#
+#         spinBox_vent_power = QtWidgets.QSpinBox(self)
+#         spinBox_vent_power.setMaximum(255)
+#         spinBox_vent_power.setValue(255)
+#         spinBox_vent_power.setWrapping(True)
+#         spinBox_vent_power.setObjectName("spinBox_vent_power")
+#         horizontal_layout.addWidget(spinBox_vent_power)
+#         self.widgets_list.append(spinBox_vent_power)
+#
+#         spinBox_vent_stop = QtWidgets.QSpinBox(self)
+#         spinBox_vent_stop.setMaximum(500000)
+#         spinBox_vent_stop.setFixedWidth(65)
+#         spinBox_vent_stop.setSuffix(self.spinBox_vent_stop.suffix())
+#         spinBox_vent_stop.setObjectName("spinBox_vent_stop")
+#         horizontal_layout.addWidget(spinBox_vent_stop)
+#         self.widgets_list.append(spinBox_vent_stop)
+#
+#         label_vent_stop = QtWidgets.QLabel(self)
+#         label_vent_stop.setText(self.label_vent_stop.text())
+#         label_vent_stop.setGeometry(QtCore.QRect(260, 410, 55, 20))
+#         label_vent_stop.setObjectName("label_vent_stop")
+#         horizontal_layout.addWidget(label_vent_stop)
+#         self.widgets_list.append(label_vent_stop)
+#
+#         self.vertical_layout_fan_4.addLayout((horizontal_layout))
+#
+#
+#
+#     def names_list(self):
+#         '''Tries to names the widgets when they appears'''
+#
+#         name_dictionary = {
+#             "EN": {
+#                 "label_vent_start": "Vent start"},
+#             "UKR": {}
+#         }
+#
+#         try:
+#             for widget in self.widgets_list:
+#                 print("button is",dialog.translate_button.text())
+#                 if isinstance(widget, QtWidgets.QLabel):
+#                     print("label")
+#                 elif isinstance(widget, QtWidgets.QSpinBox):
+#
+#                     print("QSpinBox")
+#         except:
+#             pass
+
 class Fan_widgets(ParentWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.vertical_layout_fan_1 = QVBoxLayout(self)
+        self.horizontal_layout_fan_1 = QHBoxLayout(self)
         self.horizontal_layout_fan_2 = QHBoxLayout(self)
-        self.horizontal_layout_fan_3 = QHBoxLayout(self)
+        self.horizontal_layout_fan_2.addSpacing(50)
+        self.vertical_layout_fan_2 = QVBoxLayout(self)
+        self.vertical_layout_fan_3 = QVBoxLayout(self)
         self.vertical_layout_fan_4 = QVBoxLayout(self)
-        self.horizontal_layout_fan_5 = QHBoxLayout(self)
+        self.vertical_layout_fan_5 = QVBoxLayout(self)
+
+        # self.vertical_layout_fan_5 = QVBoxLayout(self)
+        # self.horizontal_layout_fan_5 = QHBoxLayout(self)
 
         self.checkBox_vent = QtWidgets.QCheckBox(self)
 
         self.checkBox_vent.setObjectName("checkBox_vent")
         self.checkBox_vent.setChecked(self.load_parameter("checkBox_vent"))
         self.checkBox_vent.clicked.connect(self.checkBox_toggled)
-        self.horizontal_layout_fan_2.addWidget(self.checkBox_vent)
+        self.horizontal_layout_fan_1.addWidget(self.checkBox_vent)
         self.label_checkBox_vent = QtWidgets.QLabel(self)
 
         self.label_checkBox_vent.setObjectName("label_checkBox_vent")
-        self.horizontal_layout_fan_2.addWidget(self.label_checkBox_vent)
-        self.horizontal_layout_fan_2.addStretch()
-        self.vertical_layout_fan_1.addLayout(self.horizontal_layout_fan_2)
+        self.horizontal_layout_fan_1.addWidget(self.label_checkBox_vent)
+        self.horizontal_layout_fan_1.addStretch()
+        self.vertical_layout_fan_1.addLayout(self.horizontal_layout_fan_1)
 
 
 
@@ -679,48 +849,66 @@ class Fan_widgets(ParentWidget):
 
         self.label_vent_start = QtWidgets.QLabel(self)
         self.label_vent_start.setObjectName("label_vent_start")
-        self.horizontal_layout_fan_5.addWidget(self.label_vent_start)
+        self.vertical_layout_fan_2.addWidget(self.label_vent_start)
 
         self.spinBox_vent_start = QtWidgets.QSpinBox(self)
         self.spinBox_vent_start.setFixedWidth(65)
         self.spinBox_vent_start.setObjectName("spinBox_vent_start")
         self.spinBox_vent_start.setMaximum(500000)
+        self.vertical_layout_fan_2.addWidget(self.spinBox_vent_start)
 
-        self.horizontal_layout_fan_5.addWidget(self.spinBox_vent_start)
+        self.horizontal_layout_fan_2.addLayout(self.vertical_layout_fan_2)
+
 
         self.label_vent_power = QtWidgets.QLabel(self)
         self.label_vent_power.setObjectName("label_vent_power")
-        self.horizontal_layout_fan_5.addWidget(self.label_vent_power)
+        self.vertical_layout_fan_3.addWidget(self.label_vent_power)
 
         self.spinBox_vent_power = QtWidgets.QSpinBox(self)
         self.spinBox_vent_power.setMaximum(255)
         self.spinBox_vent_power.setValue(255)
         self.spinBox_vent_power.setWrapping(True)
         self.spinBox_vent_power.setObjectName("spinBox_vent_power")
-        self.horizontal_layout_fan_5.addWidget(self.spinBox_vent_power)
+        self.vertical_layout_fan_3.addWidget(self.spinBox_vent_power)
+
+        self.horizontal_layout_fan_2.addLayout(self.vertical_layout_fan_3)
+
+        self.label_vent_stop = QtWidgets.QLabel(self)
+        self.label_vent_stop.setObjectName("label_vent_stop")
+        self.vertical_layout_fan_4.addWidget(self.label_vent_stop)
 
         self.spinBox_vent_stop = QtWidgets.QSpinBox(self)
         self.spinBox_vent_stop.setMaximum(500000)
         self.spinBox_vent_stop.setFixedWidth(65)
         self.spinBox_vent_stop.setObjectName("spinBox_vent_stop")
-        self.horizontal_layout_fan_5.addWidget(self.spinBox_vent_stop)
+        self.vertical_layout_fan_4.addWidget(self.spinBox_vent_stop)
+        self.horizontal_layout_fan_2.addLayout(self.vertical_layout_fan_4)
 
-        self.label_vent_stop = QtWidgets.QLabel(self)
 
-        self.label_vent_stop.setObjectName("label_vent_stop")
-        self.horizontal_layout_fan_5.addWidget(self.label_vent_stop)
+        self.label_del = QtWidgets.QLabel(self)
+        self.label_del.setObjectName("label_vent_stop")
+        self.vertical_layout_fan_5.addWidget(self.label_del)
+        self.horizontal_layout_fan_2.addLayout(self.vertical_layout_fan_5)
 
-        self.vertical_layout_fan_4.addLayout(self.horizontal_layout_fan_5)
-        self.horizontal_layout_fan_3.addLayout(self.vertical_layout_fan_4)
+        # self.pushButton_remove_vent = QtWidgets.QPushButton(self)
+        # # self.pushButton_remove_vent.setText(dialog.look_layout.pushButton_rem_new_look.text())
+        # self.pushButton_remove_vent.setObjectName("pushButton_remove_vent")
+        # self.pushButton_remove_vent.clicked.connect(self.remove_new_vent)
+        # self.vertical_layout_fan_5.addWidget(self.pushButton_remove_vent)
+        # self.widgets_list.append(self.pushButton_remove_vent)
+        # self.horizontal_layout_fan_2.addLayout(self.vertical_layout_fan_5)
+
+        # self.vertical_layout_fan_4.addLayout(self.horizontal_layout_fan_5)
+        # self.horizontal_layout_fan_2.addLayout(self.vertical_layout_fan_4)
 
 
         self.pushButton_add_vent = QtWidgets.QPushButton(self)
-
         self.pushButton_add_vent.setObjectName("pushButton_add_vent")
+        # self.pushButton_add_vent.setFixedSize(80, 50)
         self.pushButton_add_vent.clicked.connect(self.add_new_vent)
-        self.horizontal_layout_fan_3.addWidget(self.pushButton_add_vent)
-        self.horizontal_layout_fan_3.addStretch()
-        self.vertical_layout_fan_1.addLayout(self.horizontal_layout_fan_3)
+        self.horizontal_layout_fan_2.addWidget(self.pushButton_add_vent)
+        self.horizontal_layout_fan_2.addStretch()
+        self.vertical_layout_fan_1.addLayout(self.horizontal_layout_fan_2)
 
         self.count_vent: int = 1
 
@@ -738,33 +926,22 @@ class Fan_widgets(ParentWidget):
         self.checkBox_toggled(self.load_parameter("checkBox_vent"))
 
     def add_new_vent(self):
-        horizontal_layout=QHBoxLayout(self)
-        label_vent_start = QtWidgets.QLabel(self)
-        label_vent_start.setText(self.label_vent_start.text())
-        label_vent_start.setObjectName("label_vent_start")
-        horizontal_layout.addWidget(label_vent_start)
-        self.widgets_list.append(label_vent_start)
+        '''Create new area with spins'''
 
         spinBox_vent_start = QtWidgets.QSpinBox(self)
         spinBox_vent_start.setMaximum(500000)
         spinBox_vent_start.setFixedWidth(65)
         spinBox_vent_start.setSuffix(self.spinBox_vent_start.suffix())
         spinBox_vent_start.setObjectName("spinBox_vent_start")
-        horizontal_layout.addWidget(spinBox_vent_start)
+        self.vertical_layout_fan_2.addWidget(spinBox_vent_start)
         self.widgets_list.append(spinBox_vent_start)
-
-        label_vent_power = QtWidgets.QLabel(self)
-        label_vent_power.setText(self.label_vent_power.text())
-        label_vent_power.setObjectName("label_vent_power")
-        horizontal_layout.addWidget(label_vent_power)
-        self.widgets_list.append(label_vent_power)
 
         spinBox_vent_power = QtWidgets.QSpinBox(self)
         spinBox_vent_power.setMaximum(255)
         spinBox_vent_power.setValue(255)
         spinBox_vent_power.setWrapping(True)
         spinBox_vent_power.setObjectName("spinBox_vent_power")
-        horizontal_layout.addWidget(spinBox_vent_power)
+        self.vertical_layout_fan_3.addWidget(spinBox_vent_power)
         self.widgets_list.append(spinBox_vent_power)
 
         spinBox_vent_stop = QtWidgets.QSpinBox(self)
@@ -772,17 +949,39 @@ class Fan_widgets(ParentWidget):
         spinBox_vent_stop.setFixedWidth(65)
         spinBox_vent_stop.setSuffix(self.spinBox_vent_stop.suffix())
         spinBox_vent_stop.setObjectName("spinBox_vent_stop")
-        horizontal_layout.addWidget(spinBox_vent_stop)
+        self.vertical_layout_fan_4.addWidget(spinBox_vent_stop)
         self.widgets_list.append(spinBox_vent_stop)
 
-        label_vent_stop = QtWidgets.QLabel(self)
-        label_vent_stop.setText(self.label_vent_stop.text())
-        label_vent_stop.setGeometry(QtCore.QRect(260, 410, 55, 20))
-        label_vent_stop.setObjectName("label_vent_stop")
-        horizontal_layout.addWidget(label_vent_stop)
-        self.widgets_list.append(label_vent_stop)
+        pushButton_remove_vent = QtWidgets.QPushButton(self)
+        pushButton_remove_vent.setText(dialog.look_layout.pushButton_rem_new_look.text())
+        pushButton_remove_vent.setFixedSize(70,24)
+        pushButton_remove_vent.setObjectName("pushButton_remove_vent")
+        pushButton_remove_vent.clicked.connect(self.remove_new_vent)
+        self.vertical_layout_fan_5.addWidget(pushButton_remove_vent)
+        self.widgets_list.append(pushButton_remove_vent)
+    def remove_new_vent(self):
+        '''Remove button with 3 previous added spins'''
+        #
+        # if self.pushButton_remove_vent == self.sender():
+        #     self.spinBox_vent_start.setValue(0)
+        #     self.spinBox_vent_power.setValue(0)
+        #     self.spinBox_vent_stop.setValue(0)
+        index:int=None
+        for i, widget in enumerate(self.widgets_list):
+            if widget == self.sender():  # Find the index of the clicked button
+                index = i
+                print(index)
+                break
+        if  index is not None:
 
-        self.vertical_layout_fan_4.addLayout((horizontal_layout))
+            self.widgets_list[index].setParent(None)
+            self.widgets_list[index - 1].setParent(None)
+            self.widgets_list[index - 2].setParent(None)
+            self.widgets_list[index - 3].setParent(None)
+            del self.widgets_list[max(0, index - 3):index + 1] #The max(0, index - 3) is used to ensure that the indices are within the valid range.
+
+
+
 
 
 
@@ -803,39 +1002,8 @@ class Fan_widgets(ParentWidget):
                 elif isinstance(widget, QtWidgets.QSpinBox):
 
                     print("QSpinBox")
-
-                # if widget.instance
-                #         "label" in widget.objectName():
-                #     print(dialog.translate_button.text())
-                #     print(type(dialog.translate_button.text()))
-                #     print(widget.objectName())
-                #     print(type(widget.objectName()))
-                #     print(name_dictionary)
-                #     print(name_dictionary[dialog.translate_button.text()][widget.objectName()])
-                    # )print(name_dictionary["EN"][widget.objectName(])
-                #     widget.setText(name_dictionary[dialog.translate_button.text()][widget.objectName()])
-                # widget.setText()
-
         except:
             pass
-
-
-        # for widget in self.widgets_list:
-            # if widget.objectName() ==
-        # pass
-        # self.fan_layout.label_vent_start.setText(_translate("MainWindow", "Vent start"))
-        # self.fan_layout.label_vent_start.setAlignment(QtCore.Qt.AlignRight)
-        # self.fan_layout.spinBox_vent_start.setSuffix(_translate("MainDialog", " layer"))
-        # self.fan_layout.label_vent_power.setText(_translate("MainWindow", "Power:"))
-        # self.fan_layout.label_vent_stop.setText(_translate("MainWindow", "vent stop"))
-        # self.fan_layout.spinBox_vent_stop.setSuffix(_translate("MainDialog", " layer"))
-        # self.fan_layout.pushButton_add_vent.setText(_translate("MainWindow", "Add"))
-
-    # def add_new_vent(self):
-    #     '''Add new fan layer'''
-    #     pass
-
-
 
 
 
