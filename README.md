@@ -15,13 +15,14 @@ This post-processing script adds utility for the following features:
 
 ## Usage
 
-~~1. Launch PrusaSlicer and import your 3D model.
-~2. Configure your print settings as desired.
-~3. In PrusaSlicer, navigate to **Print Settings** -> **Output Options** -> **Post-processing scripts**.
-~5. Click Open to add the script to your PrusaSlicer configuration.
-~6. Adjust any parameters or settings within the script if required.
-~7. Slice your model as usual and export the G-code.
+1. Launch PrusaSlicer and import your 3D model.
+2. Configure your print settings as desired.
+3. In PrusaSlicer, navigate to **Print Settings** -> **Output Options** -> **Post-processing scripts**.
+4. Іnsert (or type) the absolute path to the script (e.g., C:\Users\***\Desktop\3D\progs\PostProcessing-Script-for-PrusaSlicer\dist\PostProcessing-Script-for-PrusaSlicer.exe) to add the script to the PrusaSlicer configuration.
 
+6. Slice your model as usual and export the G-code.
+7. Adjust any parameters or settings within the script if required.
+#or
 **Just drag the G-code file onto the executable file.**
 
 ## Contributing
@@ -60,13 +61,12 @@ If you have any questions, issues, or suggestions, please contact the project ma
 
 ## Використання
 
-~~1. Запустіть PrusaSlicer та імпортуйте вашу 3D-модель. 
-~2. Налаштуйте параметри друку за бажанням. ~
-~3. В PrusaSlicer перейдіть до **Параметри друку** -> **Параметри виводу** -> **Сценарії пост-обробки**. ~
-~4. Клацніть кнопку **Додати сценарій** та перейдіть до розташування, де ви розпакували файли сценарію пост-обробки. 
-~5.  Клацніть **Відкрити**, щоб додати сценарій до конфігурації PrusaSlicer. 
-~6.  За необхідності налаштуйте будь-які параметри або налаштування в межах сценарію.
-~7.  Наріжте вашу модель, як зазвичай, і експортуйте G-код.
+1. Запустіть PrusaSlicer та імпортуйте вашу 3D-модель. 
+2. Налаштуйте параметри друку за бажанням. 
+3. В PrusaSlicer перейдіть до **Параметри друку** -> **Параметри виводу** -> **Скрипти пост-обробки**. 
+4.  Вставте(чи впишіть) абсолютний шлях до скрипта пост-обробки.( Наприклад: C:\Users\***\Desktop\3D\progs\PostProcessing-Script-for-PrusaSlicer\dist\PostProcessing-Script-for-PrusaSlicer.exe;), щоб додати сценарій до конфігурації PrusaSlicer.
+5.  Наріжте вашу модель, як зазвичай, і експортуйте G-код.
+6.  За необхідності налаштуйте будь-які параметри або налаштування в межах сценарію.
 
 **Просто перетягніть файл G-коду на виконавчий файл.**
 
