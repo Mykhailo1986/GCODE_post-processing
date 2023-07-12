@@ -39,7 +39,6 @@ def fan_off(gcode_file:str,  FAN_TILL: int):
             if count == FAN_TILL :
                 lines.insert(i + 1, "M106 S0   ; Turn off the fan \n")
                 print(f"Tutn off the fun at {FAN_TILL} layer.")
-
                 break  # Stop the loop after the occurrence
     # Write the modified lines back to the file
     with open(gcode_file, "w") as file:
