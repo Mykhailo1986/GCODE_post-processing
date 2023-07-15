@@ -264,7 +264,7 @@ class MainDialog(QDialog):
         if self.look_layout.checkBox_look.isChecked():
             if self.look_layout.checkBox_brim.isChecked():
                 first_layers_look.pause_after_brim(
-                    sys.argv[1], self.spinBox_X.value(), self.spinBox_Y.value(), 1
+                    sys.argv[1], self.look_layout.spinBox_X.value(), self.look_layout.spinBox_Y.value(), 1
                 )
 
             for widget in self.look_layout.widgets_list:
@@ -272,8 +272,8 @@ class MainDialog(QDialog):
                     first_layers_look.layer_look(
                         sys.argv[1],
                         widget.value(),
-                        self.spinBox_X.value(),
-                        self.spinBox_Y.value(),
+                        self.look_layout.spinBox_X.value(),
+                        self.look_layout.spinBox_Y.value(),
                     )
 
         if self.fan_layout.checkBox_vent.isChecked():
