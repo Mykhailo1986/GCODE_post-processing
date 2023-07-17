@@ -305,6 +305,7 @@ class MainDialog(QDialog):
             "doubleSpinBox_material_linear_advance_factor": self.LA_layout.doubleSpinBox_material_linear_advance_factor.value(),
             "spinBox_X": self.look_layout.spinBox_X.value(),
             "spinBox_Y": self.look_layout.spinBox_Y.value(),
+            "spinBox_layer": self.look_layout.spinBox_layer.value(),
             "translate_button": self.translate_button.text(),
         }
         # Convert the dictionary to JSON
@@ -459,6 +460,8 @@ class LA_widgets(ParentWidget):
             self
         )
         self.doubleSpinBox_material_linear_advance_factor.setFixedWidth(50)
+        self.doubleSpinBox_material_linear_advance_factor.setSingleStep(0.05)
+        self.doubleSpinBox_material_linear_advance_factor.setValue(self.load_parameter("doubleSpinBox_material_linear_advance_factor"))
         self.doubleSpinBox_material_linear_advance_factor.setObjectName(
             "doubleSpinBox_material_linear_advance_factor"
         )
@@ -614,6 +617,7 @@ class Look_widgets(ParentWidget):
 
         self.spinBox_layer = QtWidgets.QSpinBox(self)
         self.spinBox_layer.setMaximum(500000)
+        self.spinBox_layer.setValue(self.load_parameter("spinBox_layer"))
         # self.spinBox_layer.setMaximumWidth(30)
         self.spinBox_layer.setObjectName("spinBox_layer")
         self.layer_look_list.append(self.label_look)
