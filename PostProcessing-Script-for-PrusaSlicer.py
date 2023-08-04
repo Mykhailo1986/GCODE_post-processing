@@ -2,7 +2,7 @@ import sys
 import json
 
 import linear_advance_add
-from fan_layers_control import fan_on_off
+from fan_layers_control import fan_on
 import extrusion_width_hight
 from linear_advance_add import add_LA
 from first_layers_look import layer_look
@@ -322,26 +322,26 @@ class MainDialog(QDialog):
             and self.spinBox_vent_start.value() == 0
             and self.spinBox_vent_stop.value() == 0
         ):
-            fan_on_off(
+            fan_on(
                 gcode_file,
                 self.spinBox_vent_start.value(),
                 self.spinBox_vent_power.value(),
                 self.spinBox_vent_stop.value(),
             )
             try:
-                fan_on_off(
+                fan_on(
                     gcode_file,
                     self.spinBox_vent_start_2.value(),
                     self.spinBox_vent_power_2.value(),
                     self.spinBox_vent_stop_2.value(),
                 )
-                fan_on_off(
+                fan_on(
                     gcode_file,
                     self.spinBox_vent_start_3.value(),
                     self.spinBox_vent_power_3.value(),
                     self.spinBox_vent_stop_3.value(),
                 )
-                fan_on_off(
+                fan_on(
                     gcode_file,
                     self.spinBox_vent_start_4.value(),
                     self.spinBox_vent_power_4.value(),

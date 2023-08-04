@@ -921,3 +921,4 @@ if __name__ == "__main__":
         )
         alert = NoFile()
     sys.exit(app.exec_())
+    input()
