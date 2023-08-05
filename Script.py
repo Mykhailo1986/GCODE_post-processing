@@ -31,7 +31,7 @@ class MainDialog(QDialog):
         self.resize(600, 520)
         self.setWindowTitle(f"Post Processing: {sys.argv[1]}")
         self.vertical_layout_main_window_1 = QVBoxLayout(self)
-        self.horizontal_layout_main_window_2 = QVBoxLayout(self)
+        self.horizontal_layout_main_window_2 = QVBoxLayout()
 
         self.LA_layout = LA_widgets(self)
 
@@ -373,6 +373,12 @@ class LA_widgets(ParentWidget):
         super().__init__(parent)
 
         self.horizontal_layout_LA_1 = QHBoxLayout(self)
+        self.vertical_layout_LA_2 = QVBoxLayout()
+        self.horizontal_layout_LA_3 = QHBoxLayout()
+        self.vertical_layout_LA_4 = QVBoxLayout()
+        self.vertical_layout_LA_5 = QVBoxLayout()
+        self.vertical_layout_LA_6 = QVBoxLayout()
+        self.horizontal_layout_LA_7 = QHBoxLayout()
 
         self.checkBox_LA = QtWidgets.QCheckBox(self)
         self.checkBox_LA.setObjectName("checkBox_LA")
@@ -390,11 +396,7 @@ class LA_widgets(ParentWidget):
         )
         self.horizontal_layout_LA_1.addSpacerItem(self.spacer_item)
 
-        self.vertical_layout_LA_2 = QVBoxLayout(self)
 
-        self.horizontal_layout_LA_3 = QHBoxLayout(self)
-
-        self.vertical_layout_LA_4 = QVBoxLayout(self)
         self.label_line_width = QtWidgets.QLabel(self)
         # self.label_line_width.setAlignment(QtCore.Qt.AlignCenter)
         self.label_line_width.setObjectName("label_line_width")
@@ -411,7 +413,7 @@ class LA_widgets(ParentWidget):
         self.horizontal_layout_LA_3.addLayout(self.vertical_layout_LA_4)
         self.horizontal_layout_LA_3.addSpacing(10)
 
-        self.vertical_layout_LA_5 = QVBoxLayout(self)
+
         self.label_layer_height = QtWidgets.QLabel(self)
         # self.label_layer_height.setAlignment(QtCore.Qt.AlignCenter)
         self.label_layer_height.setObjectName("label_layer_height")
@@ -429,7 +431,7 @@ class LA_widgets(ParentWidget):
         self.horizontal_layout_LA_3.addLayout(self.vertical_layout_LA_5)
         self.horizontal_layout_LA_3.addSpacing(10)
 
-        self.vertical_layout_LA_6 = QVBoxLayout(self)
+
         self.label_material_diameter = QtWidgets.QLabel(self)
         self.label_material_diameter.setObjectName("label_material_diameter")
         self.vertical_layout_LA_6.addWidget(self.label_material_diameter)
@@ -448,7 +450,7 @@ class LA_widgets(ParentWidget):
 
         self.vertical_layout_LA_2.addLayout(self.horizontal_layout_LA_3)
 
-        self.horizontal_layout_LA_7 = QHBoxLayout(self)
+
         self.label_material_linear_advance_factor = QtWidgets.QLabel(self)
         self.label_material_linear_advance_factor.setObjectName(
             "label_material_linear_advance_factor"
@@ -492,9 +494,8 @@ class Arc_widgets(ParentWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.vertical_layout_Arc_1 = QVBoxLayout(self)
-
-        self.horizontal_layout_Arc_2 = QFormLayout(self)
-        self.horizontal_layout_Arc_3 = QHBoxLayout(self)
+        self.horizontal_layout_Arc_2 = QFormLayout()
+        self.horizontal_layout_Arc_3 = QHBoxLayout()
         self.horizontal_layout_Arc_3.addSpacing(100)
 
         # Second block for converting g1 to g2/g3 commands.
@@ -542,15 +543,15 @@ class Look_widgets(ParentWidget):
         super().__init__(parent)
         self.vertical_layout_look_1 = QVBoxLayout(self)
 
-        self.horizontal_layout_look_2 = QHBoxLayout(self)
-        self.horizontal_layout_look_3 = QHBoxLayout(self)
-        self.horizontal_layout_look_4 = QHBoxLayout(self)
+        self.horizontal_layout_look_2 = QHBoxLayout()
+        self.horizontal_layout_look_3 = QHBoxLayout()
+        self.horizontal_layout_look_4 = QHBoxLayout()
         self.horizontal_layout_look_4.addSpacing(50)
         # self.horizontal_layout_look_4.setContentsMargins(50, 0, 0, 0)
-        self.vertical_layout_look_5 = QVBoxLayout(self)
-        self.horizontal_layout_look_6 = QHBoxLayout(self)
+        self.vertical_layout_look_5 = QVBoxLayout()
+        self.horizontal_layout_look_6 = QHBoxLayout()
 
-        self.form_layout_look = QFormLayout(self)
+        self.form_layout_look = QFormLayout()
 
         # 3rd block for look at the model
         self.checkBox_look = QtWidgets.QCheckBox(self)
@@ -686,7 +687,7 @@ class Look_widgets(ParentWidget):
     def add_new_look(self):
         """Adding up to 3 aditional SpinBoxes"""
 
-        horizontal_layout = QHBoxLayout(self)
+        horizontal_layout = QHBoxLayout()
         horizontal_layout.setContentsMargins(50, 0, 0, 0)
         label_look = QtWidgets.QLabel(self)
         label_look.setText(self.label_look.text())
@@ -724,13 +725,13 @@ class Fan_widgets(ParentWidget):
         super().__init__(parent)
 
         self.vertical_layout_fan_1 = QVBoxLayout(self)
-        self.horizontal_layout_fan_1 = QHBoxLayout(self)
-        self.horizontal_layout_fan_2 = QHBoxLayout(self)
+        self.horizontal_layout_fan_1 = QHBoxLayout()
+        self.horizontal_layout_fan_2 = QHBoxLayout()
         self.horizontal_layout_fan_2.addSpacing(50)
-        self.vertical_layout_fan_2 = QVBoxLayout(self)
-        self.vertical_layout_fan_3 = QVBoxLayout(self)
-        self.vertical_layout_fan_4 = QVBoxLayout(self)
-        self.vertical_layout_fan_5 = QVBoxLayout(self)
+        self.vertical_layout_fan_2 = QVBoxLayout()
+        self.vertical_layout_fan_3 = QVBoxLayout()
+        self.vertical_layout_fan_4 = QVBoxLayout()
+        self.vertical_layout_fan_5 = QVBoxLayout()
 
         self.checkBox_vent = QtWidgets.QCheckBox(self)
 
@@ -920,5 +921,7 @@ if __name__ == "__main__":
             "File not specifed. Use PostProcessing-Script-for-PrusaSlicer.py <gcode file>."
         )
         alert = NoFile()
+
+
     sys.exit(app.exec_())
-    input()
+
